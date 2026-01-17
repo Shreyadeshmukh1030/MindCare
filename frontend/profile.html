@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>My Profile | MindWell</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            "brand-primary": "#6366F1",
+            "brand-primary-hover": "#4F46E5",
+            "brand-sidebar": "#EEF2FF",
+            "brand-bg": "#F5F7FF",
+            "brand-accent": "#6366F1",
+          },
+          fontFamily: {
+            sans: ['"Segoe UI"', "Roboto", "Helvetica Neue", "Arial", "sans-serif"],
+          },
+          boxShadow: {
+            'md-glass': '0 4px 30px rgba(99, 102, 241, 0.25)',
+          },
+          borderRadius: {
+            '3xl': '1.5rem',
+          }
+        },
+      },
+    };
+  </script>
+
+</head>
+
+<body class="bg-brand-bg text-gray-800 font-sans">
+
+  <div class="max-w-6xl mx-auto py-12 px-6">
+
+    <h1 class="text-4xl font-extrabold mb-10 text-center text-brand-primary tracking-wide">My Profile</h1>
+
+    <div class="max-w-4xl mx-auto">
+
+      <div class="bg-white rounded-3xl shadow-md-glass border border-gray-100 overflow-hidden">
+
+        <!-- HEADER BANNER -->
+        <div class="bg-brand-sidebar h-32 w-full rounded-t-3xl"></div>
+
+        <div class="px-10 pb-10">
+
+          <!-- PROFILE HEADER -->
+          <div class="relative flex justify-between items-end -mt-16 mb-8">
+
+            <div class="flex items-end gap-6">
+
+              <div id="avatar"
+                class="w-28 h-28 bg-brand-primary rounded-3xl border-8 border-white shadow-xl flex items-center justify-center text-white text-6xl font-extrabold select-none">
+                <!-- First letter of username -->
+              </div>
+
+              <div>
+                <h2 id="username" class="text-5xl font-extrabold text-gray-900 tracking-tight"></h2>
+                <p id="email" class="text-brand-accent text-lg mt-1"></p>
+              </div>
+
+            </div>
+
+            <button id="editBtn"
+              class="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-100 shadow-md transition duration-200">
+              Edit Profile
+            </button>
+
+          </div>
+
+          <!-- MESSAGE -->
+          <div id="messageBox" class="hidden mb-6 p-4 rounded-lg text-center font-semibold"></div>
+
+          <!-- VIEW MODE -->
+          <div id="viewSection" class="grid grid-cols-1 md:grid-cols-2 gap-10 text-gray-700">
+
+            <div class="bg-brand-bg p-8 rounded-2xl shadow-sm">
+              <span
+                class="block text-xs font-bold text-brand-accent uppercase mb-2 tracking-widest">Age</span>
+              <span id="viewAge" class="text-3xl font-bold"></span>
+            </div>
+
+            <div class="bg-brand-bg p-8 rounded-2xl shadow-sm">
+              <span
+                class="block text-xs font-bold text-brand-accent uppercase mb-2 tracking-widest">Gender</span>
+              <span id="viewGender" class="text-3xl font-bold"></span>
+            </div>
+
+            <div class="bg-brand-bg p-8 rounded-2xl shadow-sm">
+              <span
+                class="block text-xs font-bold text-brand-accent uppercase mb-2 tracking-widest">Occupation</span>
+              <span id="viewOccupation" class="text-3xl font-bold"></span>
+            </div>
+
+            <div class="bg-brand-bg p-8 rounded-2xl shadow-sm">
+              <span
+                class="block text-xs font-bold text-brand-accent uppercase mb-2 tracking-widest">Account ID</span>
+              <span id="viewId" class="text-3xl font-bold"></span>
+            </div>
+
+          </div>
+
+          <!-- EDIT FORM -->
+          <form id="editForm" class="hidden grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+
+            <div>
+              <label class="block text-sm font-semibold mb-2 tracking-wide text-gray-700">Full Name</label>
+              <input name="name"
+                class="w-full border border-gray-300 rounded-xl p-4 text-lg focus:outline-none focus:ring-2 focus:ring-brand-primary" required />
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-2 tracking-wide text-gray-700">Age</label>
+              <input name="age" type="number" min="1" max="120"
+                class="w-full border border-gray-300 rounded-xl p-4 text-lg focus:outline-none focus:ring-2 focus:ring-brand-primary" />
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-2 tracking-wide text-gray-700">Gender</label>
+              <select name="gender"
+                class="w-full border border-gray-300 rounded-xl p-4 text-lg focus:outline-none focus:ring-2 focus:ring-brand-primary">
+                <option value="">Select</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Non-binary</option>
+                <option>Prefer not to say</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-2 tracking-wide text-gray-700">Occupation</label>
+              <input name="occupation"
+                class="w-full border border-gray-300 rounded-xl p-4 text-lg focus:outline-none focus:ring-2 focus:ring-brand-primary" />
+            </div>
+
+            <div class="md:col-span-2 flex justify-end">
+              <button
+                class="bg-brand-primary text-white px-12 py-4 rounded-xl font-bold hover:bg-brand-primary-hover shadow-lg transition duration-200">
+                Save Changes
+              </button>
+            </div>
+
+          </form>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    // Check if user is logged in
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+      // Not logged in, redirect to login page
+      window.location.href = "login.html";
+    } else {
+      // Populate UI with user info
+      const avatarEl = document.getElementById("avatar");
+      avatarEl.textContent = user.name.charAt(0).toUpperCase();
+
+      document.getElementById("username").textContent = user.name;
+      document.getElementById("email").textContent = user.email;
+
+      document.getElementById("viewAge").textContent = user.age || "Not set";
+      document.getElementById("viewGender").textContent = user.gender || "Not set";
+      document.getElementById("viewOccupation").textContent = user.occupation || "Not set";
+      document.getElementById("viewId").textContent = "#" + (user.id || "0000");
+
+      // Pre-fill form fields for editing
+      const form = document.getElementById("editForm");
+      form.name.value = user.name || "";
+      form.age.value = user.age || "";
+      form.gender.value = user.gender || "";
+      form.occupation.value = user.occupation || "";
+    }
+
+    // Toggle edit mode
+    const editBtn = document.getElementById("editBtn");
+    const editForm = document.getElementById("editForm");
+    const viewSection = document.getElementById("viewSection");
+    const messageBox = document.getElementById("messageBox");
+
+    let isEditing = false;
+
+    editBtn.onclick = () => {
+      isEditing = !isEditing;
+
+      if (isEditing) {
+        editForm.classList.remove("hidden");
+        viewSection.classList.add("hidden");
+        editBtn.textContent = "Cancel Edit";
+        messageBox.classList.add("hidden");
+      } else {
+        editForm.classList.add("hidden");
+        viewSection.classList.remove("hidden");
+        editBtn.textContent = "Edit Profile";
+        messageBox.classList.add("hidden");
+      }
+    };
+
+    // Save profile changes to localStorage
+    editForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(editForm);
+      const updatedUser = {
+        ...user,
+        name: formData.get("name").trim(),
+        age: formData.get("age").trim(),
+        gender: formData.get("gender").trim(),
+        occupation: formData.get("occupation").trim(),
+      };
+
+      // Basic validation
+      if (!updatedUser.name) {
+        showMessage("Name is required", "error");
+        return;
+      }
+
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      showMessage("Profile updated successfully!", "success");
+
+      // Update UI after saving
+      document.getElementById("username").textContent = updatedUser.name;
+      document.getElementById("email").textContent = updatedUser.email;
+      document.getElementById("viewAge").textContent = updatedUser.age || "Not set";
+      document.getElementById("viewGender").textContent = updatedUser.gender || "Not set";
+      document.getElementById("viewOccupation").textContent = updatedUser.occupation || "Not set";
+      document.getElementById("avatar").textContent = updatedUser.name.charAt(0).toUpperCase();
+
+      // Close edit mode
+      editForm.classList.add("hidden");
+      viewSection.classList.remove("hidden");
+      editBtn.textContent = "Edit Profile";
+    });
+
+    // Show message helper
+    function showMessage(msg, type) {
+      messageBox.textContent = msg;
+      messageBox.className = "mb-6 p-4 rounded-lg text-center font-semibold";
+
+      if (type === "success") {
+        messageBox.classList.add("bg-green-50", "text-green-700");
+      } else if (type === "error") {
+        messageBox.classList.add("bg-red-50", "text-red-700");
+      }
+
+      messageBox.classList.remove("hidden");
+    }
+  </script>
+
+</body>
+
+</html>

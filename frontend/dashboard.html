@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>MindWell Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-primary': '#2563eb',
+            'brand-primary-hover': '#1e40af',
+            'brand-bg': '#eff6ff',
+            'brand-sidebar': '#e0e7ff'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <div class="max-w-7xl mx-auto flex-grow p-6">
+
+    <!-- HERO -->
+    <div
+      class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 mb-10 flex flex-col md:flex-row items-center justify-between">
+
+      <div class="flex-1">
+
+        <h2 id="greetingText" class="text-3xl font-bold text-gray-800 mb-2">
+          Loading...
+        </h2>
+
+        <p class="text-gray-500 mb-4">
+          Welcome to your personal mental wellness space.
+        </p>
+
+        <blockquote id="motivationalQuote"
+          class="italic text-brand-primary font-semibold text-lg border-l-4 border-brand-primary pl-4 mb-6 min-h-[72px]">
+        </blockquote>
+
+        <div class="flex gap-3">
+
+          <a href="round1.html"
+            class="bg-brand-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-primary-hover">
+            Start Assessment
+          </a>
+
+          <a href="results.html"
+            class="bg-brand-bg text-brand-primary px-6 py-3 rounded-xl font-bold">
+            View Reports
+          </a>
+
+          <button onclick="logout()"
+            class="bg-red-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-red-600">
+            Logout
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t py-4 text-center text-sm text-gray-400">
+    © 2026 MindWell
+  </footer>
+
+  <!-- SCRIPT -->
+  <script>
+
+    const API_BASE = "http://localhost:5000/api";
+
+    // ---------- AUTH GUARD ----------
+    const token = localStorage.getItem("mindwellToken");
+    const userData = localStorage.getItem("mindwellUser");
+
+    if (!token || !userData) {
+      window.location.href = "login.html";
+    }
+
+    const user = JSON.parse(userData);
+
+    // ---------- GREETING ----------
+    function getGreeting() {
+      const hour = new Date().getHours();
+      if (hour < 12) return "Good Morning";
+      if (hour < 18) return "Good Afternoon";
+      return "Good Evening";
+    }
+
+    const firstName = user.name.split(" ")[0];
+    document.getElementById("greetingText").innerText =
+      `${getGreeting()}, ${firstName}!`;
+
+    // ---------- MOTIVATION QUOTES ----------
+    const quotes = [
+      "Your mental health is a priority.",
+      "Healing takes time. Be patient with yourself.",
+      "Self-care is strength.",
+      "Small steps still move you forward.",
+      "Progress, not perfection."
+    ];
+
+    document.getElementById("motivationalQuote").innerText =
+      `"${quotes[Math.floor(Math.random() * quotes.length)]}"`;
+
+    // ---------- LOGOUT ----------
+    function logout() {
+      localStorage.removeItem("mindwellToken");
+      localStorage.removeItem("mindwellUser");
+      window.location.href = "login.html";
+    }
+
+  </script>
+
+</body>
+
+</html>

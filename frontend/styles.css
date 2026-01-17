@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+/* Theme colors and fonts */
+:root {
+  --brand-primary: #4A8180;
+  --brand-primary-hover: #3A6665;
+  --brand-bg: #F3F7FA;
+  --brand-text: #1A202C;
+  --brand-accent: #4A6072;
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --font-family-sans: "Inter", system-ui, sans-serif;
+}
+
+/* Body base */
+body {
+  background-color: var(--brand-bg);
+  color: var(--brand-text);
+  font-family: var(--font-family-sans);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+/* Glass effect */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+
+/* Gradient text */
+.text-gradient {
+  background: linear-gradient(135deg, #4A8180 0%, #305872 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
+}
+
+/* Hero background */
+.bg-hero-pattern {
+  background-image: url('./assets/redesign/bg.png');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.bg-hero-pattern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, rgba(243, 247, 250, 0.4) 0%, rgba(243, 247, 250, 0) 100%);
+  z-index: 0;
+}
+
+/* Float animation */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Reveal animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease-out;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Shadow text */
+.shadow-text {
+  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

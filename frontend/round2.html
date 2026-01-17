@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <title>Round 2 Assessment | Enhanced UI</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-primary': '#6366f1',
+            'brand-primary-hover': '#4f46e5',
+            'brand-accent': '#7c3aed',
+            'brand-accent-hover': '#6d28d9',
+          },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'xl-soft': '0 20px 25px -5px rgba(99,102,241,0.15), 0 10px 10px -5px rgba(124,58,237,0.1)',
+          },
+          transitionProperty: {
+            'width': 'width',
+            'spacing': 'margin, padding',
+            'colors': 'background-color, border-color, color, fill, stroke',
+          }
+        },
+      },
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* Glassmorphism style for right panel */
+    .glass {
+      backdrop-filter: blur(16px);
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-100 via-white to-purple-100 min-h-screen p-8 font-sans">
+
+  <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+
+    <!-- LEFT: ASSESSMENT -->
+    <div class="lg:col-span-2 flex justify-center">
+      <div
+        class="bg-white rounded-3xl shadow-xl-soft border border-gray-200 p-10 md:p-16 w-full max-w-2xl transition-shadow duration-300 hover:shadow-2xl"
+      >
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8">
+          <span
+            id="stepText"
+            class="text-sm font-semibold text-gray-500 uppercase tracking-widest select-none"
+          ></span>
+
+          <div class="w-1/3 h-2 bg-gray-200 rounded-full overflow-hidden shadow-inner">
+            <div
+              id="progressBar"
+              class="h-2 bg-gradient-to-r from-brand-primary to-brand-accent rounded-full transition-width duration-500 ease-in-out"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Question -->
+        <h2
+          id="questionText"
+          class="text-4xl font-extrabold text-gray-900 mb-12 leading-tight tracking-tight"
+        ></h2>
+
+        <!-- Form -->
+        <form id="questionForm" class="space-y-6">
+          <div id="optionsContainer"></div>
+
+          <div
+            class="mt-16 flex justify-between items-center"
+          >
+            <button
+              type="button"
+              id="backBtn"
+              class="text-gray-600 font-semibold hover:text-gray-900 disabled:opacity-30 transition-colors duration-300 px-6 py-3 rounded-lg select-none"
+            >
+              Back
+            </button>
+
+            <button
+              type="submit"
+              id="nextBtn"
+              class="bg-gradient-to-r from-brand-primary to-brand-accent text-white px-12 py-4 rounded-2xl font-bold shadow-lg hover:from-brand-accent-hover hover:to-brand-primary-hover transition-all duration-300 transform hover:-translate-y-1 select-none"
+            >
+              Continue
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- RIGHT: TIPS & QUOTES -->
+    <aside
+      class="hidden lg:block sticky top-8 space-y-8 glass rounded-3xl p-8 shadow-lg border border-white/40 max-w-md"
+    >
+      <!-- Quote -->
+      <p
+        id="healthQuote"
+        class="text-2xl italic font-semibold text-gray-700 leading-relaxed text-center drop-shadow-sm"
+      ></p>
+
+      <!-- Tips -->
+      <div>
+        <h3 class="text-2xl font-extrabold text-gray-800 mb-6 tracking-wide border-b border-gray-300 pb-3">
+          Wellness Tips
+        </h3>
+
+        <ul class="space-y-5 text-lg text-gray-700">
+          <li class="flex gap-4 items-center">
+            <span class="text-3xl animate-pulse">🫁</span>
+            <span>Slow breathing can reduce anxiety instantly</span>
+          </li>
+          <li class="flex gap-4 items-center">
+            <span class="text-3xl animate-pulse delay-100">🚶</span>
+            <span>Movement improves emotional regulation</span>
+          </li>
+          <li class="flex gap-4 items-center">
+            <span class="text-3xl animate-pulse delay-200">💧</span>
+            <span>Hydration impacts mood & focus</span>
+          </li>
+          <li class="flex gap-4 items-center">
+            <span class="text-3xl animate-pulse delay-300">📵</span>
+            <span>Limit screens before sleep</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Gentle Note -->
+      <div
+        class="text-sm text-gray-600 bg-indigo-100/60 rounded-xl p-5 text-center font-semibold select-none shadow-inner"
+      >
+        💚 This assessment supports awareness, not diagnosis. If you feel overwhelmed,
+        consider reaching out to a mental health professional.
+      </div>
+    </aside>
+  </div>
+
+  <!-- QUOTES SCRIPT -->
+  <script>
+    const quotes = [
+      "Your mental health matters just as much as your physical health.",
+      "Healing is not linear — be kind to yourself.",
+      "Small steps every day lead to meaningful change.",
+      "It’s okay to slow down. You are not falling behind.",
+      "Taking care of your mind is a form of strength."
+    ];
+
+    function setRandomQuote() {
+      document.getElementById("healthQuote").innerText =
+        `"${quotes[Math.floor(Math.random() * quotes.length)]}"`;
+    }
+    setRandomQuote();
+  </script>
+
+  <!-- ASSESSMENT SCRIPT -->
+  <script>
+    /* ---------------- QUESTIONS ---------------- */
+    const questions = [
+      {
+        id: "q1",
+        text: "Do you feel pressure to meet deadlines?",
+        type: "select",
+        options: ["Not at all", "Mild", "Moderate", "Severe"],
+      },
+      {
+        id: "q2",
+        text: "How regular are your meals?",
+        type: "scale",
+        labels: {
+          1: "Very irregular",
+          2: "Somewhat irregular",
+          3: "Average",
+          4: "Mostly regular",
+          5: "Very regular",
+        },
+      },
+      {
+        id: "q3",
+        text: "Do you get physical symptoms like sweating, rapid heartbeat, or trembling?",
+        type: "select",
+        options: ["Never", "Sometimes", "Often"],
+      },
+      {
+        id: "q4",
+        text: "Do you feel hopeless about the future?",
+        type: "select",
+        options: ["Not at all", "Sometimes", "Often"],
+      },
+      {
+        id: "q5",
+        text: "Do you feel socially isolated?",
+        type: "select",
+        options: ["Never", "Sometimes", "Often"],
+      },
+      {
+        id: "q6",
+        text: "Have you had thoughts of harming yourself?",
+        type: "select",
+        options: ["Never", "Rarely", "Sometimes", "Often"],
+      },
+      {
+        id: "q7",
+        text: "Do you practice mindfulness or relaxation techniques?",
+        type: "select",
+        options: ["Never", "Occasionally", "Regularly"],
+      },
+    ];
+
+    /* ---------------- STATE ---------------- */
+    let currentStep = 0;
+    let answers = {};
+    let loading = false;
+
+    /* ---------------- DOM ---------------- */
+    const questionText = document.getElementById("questionText");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const stepText = document.getElementById("stepText");
+    const progressBar = document.getElementById("progressBar");
+    const backBtn = document.getElementById("backBtn");
+    const form = document.getElementById("questionForm");
+    const nextBtn = document.getElementById("nextBtn");
+
+    /* ---------------- RENDER ---------------- */
+    function renderQuestion() {
+      const q = questions[currentStep];
+
+      stepText.innerText = `Question ${currentStep + 1} / ${questions.length}`;
+
+      const progress = ((currentStep + 1) / questions.length) * 100;
+      progressBar.style.width = progress + "%";
+
+      questionText.innerText = q.text;
+
+      optionsContainer.innerHTML = "";
+
+      backBtn.disabled = currentStep === 0;
+
+      // SCALE
+      if (q.type === "scale") {
+        for (let i = 1; i <= 5; i++) {
+          const selected = answers[q.id] == i;
+
+          optionsContainer.innerHTML += `
+          <label
+            class="group block border-2 p-6 rounded-3xl cursor-pointer transition-all mb-5
+            ${
+              selected
+                ? "bg-gradient-to-r from-brand-primary to-brand-accent text-white shadow-xl scale-[1.04]"
+                : "bg-white border-gray-200 hover:border-brand-primary/60"
+            }"
+          >
+
+            <div class="flex items-center">
+
+              <input
+                type="radio"
+                name="${q.id}"
+                hidden
+                value="${i}"
+                ${selected ? "checked" : ""}
+              />
+
+              <div
+                class="w-10 h-10 rounded-full border-2 flex items-center justify-center
+                ${selected ? "border-white" : "border-gray-300"}"
+              >
+                ${selected ? '<div class="w-5 h-5 bg-white rounded-full"></div>' : ""}
+              </div>
+
+              <div class="ml-6">
+                <span class="block font-extrabold text-2xl">${i}</span>
+                ${
+                  q.labels
+                    ? `<span class="text-sm opacity-90">${q.labels[i]}</span>`
+                    : ""
+                }
+              </div>
+
+            </div>
+          </label>
+          `;
+        }
+      }
+
+      // SELECT
+      if (q.type === "select") {
+        q.options.forEach((opt) => {
+          const selected = answers[q.id] === opt;
+
+          optionsContainer.innerHTML += `
+          <label
+            class="group block border-2 p-6 rounded-3xl cursor-pointer transition-all mb-5
+            ${
+              selected
+                ? "bg-gradient-to-r from-brand-primary to-brand-accent text-white shadow-xl scale-[1.04]"
+                : "bg-white border-gray-200 hover:border-brand-primary/60"
+            }"
+          >
+
+            <div class="flex items-center">
+
+              <input
+                type="radio"
+                name="${q.id}"
+                hidden
+                value="${opt}"
+                ${selected ? "checked" : ""}
+              />
+
+              <div
+                class="w-8 h-8 rounded-full border-2 flex items-center justify-center
+                ${selected ? "border-white" : "border-gray-300"}"
+              >
+                ${selected ? '<div class="w-4 h-4 bg-white rounded-full"></div>' : ""}
+              </div>
+
+              <span class="ml-6 font-extrabold text-xl">${opt}</span>
+
+            </div>
+          </label>
+          `;
+        });
+      }
+
+      // Button label
+      nextBtn.innerText = loading
+        ? "Analyzing..."
+        : currentStep === questions.length - 1
+        ? "Finish Assessment"
+        : "Continue";
+    }
+
+    /* ---------------- EVENTS ---------------- */
+    // Select handler
+    optionsContainer.addEventListener("click", (e) => {
+      const label = e.target.closest("label");
+      if (!label) return;
+
+      const value = label.querySelector("input").value;
+      answers[questions[currentStep].id] = value;
+
+      renderQuestion();
+    });
+
+    // Back
+    backBtn.addEventListener("click", () => {
+      if (currentStep > 0) {
+        currentStep--;
+        renderQuestion();
+      }
+    });
+
+    // Next / Submit
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      if (currentStep < questions.length - 1) {
+        currentStep++;
+        renderQuestion();
+        return;
+      }
+
+      await submitAssessment();
+    });
+
+    /* ---------------- SUBMIT ---------------- */
+    async function submitAssessment() {
+      loading = true;
+      nextBtn.disabled = true;
+      renderQuestion();
+
+      const round1Data = JSON.parse(localStorage.getItem("round1") || "{}");
+      const round1Score = round1Data.score || 0;
+
+      let round2Score = 0;
+
+      const optionScores = {
+        "Not at all": 5,
+        Mild: 4,
+        Moderate: 2,
+        Severe: 1,
+        Never: 5,
+        Sometimes: 3,
+        Often: 1,
+        Rarely: 4,
+        Regularly: 5,
+        Occasionally: 3,
+      };
+
+      Object.entries(answers).forEach(([key, value]) => {
+        if (!value) return;
+
+        if (!isNaN(value)) {
+          round2Score += parseInt(value);
+        } else if (optionScores[value]) {
+          round2Score += optionScores[value];
+        } else {
+          round2Score += 3;
+        }
+      });
+
+      const payload = {
+        round1_score: round1Score,
+        round2_score: round2Score,
+        answers: {
+          round1: round1Data.answers,
+          round2: answers,
+        },
+      };
+
+      try {
+        await fetch("http://localhost:5000/assessment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        window.location.href = "results.html";
+      } catch (error) {
+        alert("Failed to submit assessment");
+        loading = false;
+        nextBtn.disabled = false;
+        renderQuestion();
+      }
+    }
+
+    /* ---------------- INIT ---------------- */
+    renderQuestion();
+  </script>
+</body>
+</html>

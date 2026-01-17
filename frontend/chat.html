@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MindWell Chat Assistant</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            "brand-primary": "#6366F1",
+            "brand-primary-hover": "#4F46E5",
+            "brand-sidebar": "#EEF2FF",
+            "brand-bg": "#F5F7FF",
+          },
+          keyframes: {
+            bounceDots: {
+              "0%,80%,100%": { transform: "scale(0)" },
+              "40%": { transform: "scale(1)" },
+            },
+          },
+          animation: {
+            bounceDots: "bounceDots 1.4s infinite ease-in-out both",
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    #messagesContainer::-webkit-scrollbar {
+      width: 8px;
+    }
+    #messagesContainer::-webkit-scrollbar-thumb {
+      background: #6366F1;
+      border-radius: 4px;
+    }
+
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #c7d2fe;
+      border-radius: 50%;
+      margin: 0 3px;
+      display: inline-block;
+      animation: bounceDots 1.4s infinite ease-in-out both;
+    }
+
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-indigo-50 to-white min-h-screen">
+
+<!-- AUTH GUARD -->
+<script>
+  if (!localStorage.getItem("token")) {
+    window.location.href = "login.html";
+  }
+</script>
+
+<!-- NAVBAR -->
+<nav class="bg-white shadow border-b">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+
+    <div class="flex items-center gap-2">
+      <div class="w-9 h-9 bg-brand-primary text-white flex items-center justify-center rounded-lg font-bold">M</div>
+      <span class="font-bold text-lg">MindWell</span>
+    </div>
+
+    <div class="flex gap-6 items-center">
+      <a href="dashboard.html" class="text-gray-600 hover:text-brand-primary">Dashboard</a>
+      <a href="chat.html" class="text-brand-primary font-semibold">Chat</a>
+      <a href="profile.html" class="text-gray-600 hover:text-brand-primary">Profile</a>
+
+      <button onclick="logout()" class="bg-red-500 text-white px-4 py-1.5 rounded-full hover:bg-red-600">
+        Logout
+      </button>
+    </div>
+
+  </div>
+</nav>
+
+<!-- CHAT UI -->
+<div class="flex justify-center p-4">
+
+  <div class="max-w-4xl w-full h-[85vh] bg-white rounded-3xl shadow-xl flex flex-col overflow-hidden">
+
+    <!-- HEADER -->
+    <div class="bg-gradient-to-r from-brand-primary to-brand-primary-hover text-white px-6 py-4 flex items-center">
+      <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mr-4 font-bold">AI</div>
+      <div>
+        <h3 class="font-bold text-lg">MindWell Bot</h3>
+        <span class="text-xs opacity-90">Active Support Assistant</span>
+      </div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div id="messagesContainer" class="flex-1 bg-brand-bg p-6 overflow-y-auto space-y-5">
+
+      <div class="flex justify-start">
+        <div class="w-10 h-10 bg-brand-sidebar rounded-full flex items-center justify-center text-brand-primary mr-4">AI</div>
+        <div class="bg-white px-5 py-4 rounded-3xl rounded-bl-none shadow max-w-[75%]">
+          Hello 👋 I’m MindWell Assistant. How are you feeling today?
+        </div>
+      </div>
+
+      <div id="scrollAnchor"></div>
+
+    </div>
+
+    <!-- INPUT -->
+    <div class="p-4 border-t">
+
+      <div id="quickButtons" class="flex flex-wrap gap-3 mb-3"></div>
+
+      <form id="chatForm" class="relative">
+        <input id="chatInput" type="text" placeholder="Type your message..."
+          class="w-full bg-brand-bg border rounded-full pl-5 pr-16 py-3 outline-none">
+
+        <button type="submit"
+          class="absolute right-3 top-1/2 -translate-y-1/2 bg-brand-primary text-white px-4 py-2 rounded-full">
+          Send
+        </button>
+      </form>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+
+const predefinedQuestions = [
+  "I feel stressed",
+  "I feel anxious",
+  "I am depressed",
+  "How to sleep better?",
+  "How to reduce overthinking?",
+  "Motivation tips",
+  "Breathing exercise",
+  "Feeling lonely",
+  "Panic attack help",
+  "Improve focus"
+];
+
+const quickButtons = document.getElementById("quickButtons");
+const messagesContainer = document.getElementById("messagesContainer");
+const chatInput = document.getElementById("chatInput");
+const chatForm = document.getElementById("chatForm");
+const scrollAnchor = document.getElementById("scrollAnchor");
+
+// Render quick buttons
+predefinedQuestions.forEach(q => {
+  const btn = document.createElement("button");
+  btn.innerText = q;
+  btn.className = "bg-brand-sidebar text-brand-primary px-4 py-1.5 rounded-full border hover:bg-brand-primary hover:text-white transition text-xs";
+  btn.onclick = () => sendMessage(q);
+  quickButtons.appendChild(btn);
+});
+
+// Scroll
+function scrollBottom() {
+  scrollAnchor.scrollIntoView({ behavior: "smooth" });
+}
+
+// Messages
+function addUserMessage(text) {
+  const div = document.createElement("div");
+  div.className = "flex justify-end";
+  div.innerHTML = `<div class="bg-brand-primary text-white px-4 py-3 rounded-3xl rounded-br-none shadow max-w-[75%]">${escape(text)}</div>`;
+  messagesContainer.appendChild(div);
+  scrollBottom();
+}
+
+function addBotMessage(text) {
+  const div = document.createElement("div");
+  div.className = "flex justify-start";
+  div.innerHTML = `
+  <div class="w-10 h-10 bg-brand-sidebar rounded-full flex items-center justify-center text-brand-primary mr-4">AI</div>
+  <div class="bg-white px-4 py-3 rounded-3xl rounded-bl-none shadow max-w-[75%]">${escape(text)}</div>`;
+  messagesContainer.appendChild(div);
+  scrollBottom();
+}
+
+// Loader
+function addLoader() {
+  const loader = document.createElement("div");
+  loader.id = "loader";
+  loader.className = "flex justify-start";
+  loader.innerHTML = `
+  <div class="w-10 h-10 bg-brand-sidebar rounded-full flex items-center justify-center mr-4">AI</div>
+  <div class="bg-white px-4 py-3 rounded-3xl shadow flex">
+    <span class="typing-dot"></span>
+    <span class="typing-dot"></span>
+    <span class="typing-dot"></span>
+  </div>`;
+  messagesContainer.appendChild(loader);
+  scrollBottom();
+}
+
+function removeLoader() {
+  const loader = document.getElementById("loader");
+  if (loader) loader.remove();
+}
+
+// Escape
+function escape(text) {
+  const d = document.createElement("div");
+  d.textContent = text;
+  return d.innerHTML;
+}
+
+// BOT LOGIC
+function botLogic(message) {
+
+  const msg = message.toLowerCase();
+
+  if (msg.includes("hello") || msg.includes("hi")) {
+    return "Hello! I'm here to support you. How are you feeling today?";
+  }
+
+  if (msg.includes("stress")) {
+    return "Stress can be overwhelming. Try taking slow deep breaths and short breaks during the day.";
+  }
+
+  if (msg.includes("anxious") || msg.includes("anxiety")) {
+    return "Anxiety is common. Ground yourself by focusing on your breathing and surroundings.";
+  }
+
+  if (msg.includes("depress")) {
+    return "I'm sorry you're feeling this way. You are not alone. Talking to someone you trust can really help.";
+  }
+
+  if (msg.includes("sleep")) {
+    return "Maintain a fixed sleep schedule, reduce screen time before bed, and avoid caffeine at night.";
+  }
+
+  if (msg.includes("panic")) {
+    return "Try the 4-7-8 breathing method: inhale 4s, hold 7s, exhale 8s.";
+  }
+
+  if (msg.includes("focus")) {
+    return "Break tasks into small goals and remove distractions to improve focus.";
+  }
+
+  if (msg.includes("lonely")) {
+    return "Loneliness can be tough. Connecting with friends or joining communities may help.";
+  }
+
+  if (msg.includes("breathing")) {
+    return "Inhale slowly through your nose for 4 seconds and exhale through your mouth for 6 seconds.";
+  }
+
+  return "Thank you for sharing. I'm here to listen. Would you like to talk more about it?";
+}
+
+// SEND MESSAGE
+async function sendMessage(text) {
+
+  if (!text.trim()) return;
+
+  addUserMessage(text);
+  chatInput.value = "";
+  addLoader();
+
+  await new Promise(r => setTimeout(r, 900));
+
+  removeLoader();
+
+  const reply = botLogic(text);
+  addBotMessage(reply);
+
+}
+
+// Submit
+chatForm.addEventListener("submit", e => {
+  e.preventDefault();
+  sendMessage(chatInput.value);
+});
+
+// Logout
+function logout() {
+  localStorage.clear();
+  window.location.href = "login.html";
+}
+
+</script>
+
+</body>
+</html>

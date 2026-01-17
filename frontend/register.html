@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Register | MindWell</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Theme -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            "brand-primary": "#6366F1",
+            "brand-primary-hover": "#4F46E5",
+            "brand-sidebar": "#EEF2FF"
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-white font-sans text-gray-800">
+
+  <div class="min-h-screen flex">
+
+    <!-- LEFT PANEL -->
+    <div class="hidden lg:flex w-1/2 bg-brand-sidebar items-center justify-center p-12">
+
+      <div class="text-center">
+
+        <div
+          class="w-16 h-16 bg-brand-primary rounded-2xl mx-auto mb-6 shadow-xl flex items-center justify-center text-white">
+
+          <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 11c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-4 0-8 2-8 6v1h16v-1c0-4-4-6-8-6z" />
+          </svg>
+
+        </div>
+
+        <h2 class="text-4xl font-bold mb-3">Join MindWell</h2>
+        <p class="text-gray-500">Create your secure mental wellness account</p>
+
+      </div>
+
+    </div>
+
+    <!-- FORM PANEL -->
+    <div class="flex-1 flex items-center justify-center px-8">
+
+      <div class="w-full max-w-lg space-y-6">
+
+        <div>
+          <h2 class="text-3xl font-bold">Create Account</h2>
+          <p class="text-sm text-gray-500 mt-1">
+            Already registered?
+            <a href="login.html" class="text-brand-primary font-semibold">Login</a>
+          </p>
+        </div>
+
+        <!-- FORM -->
+        <form id="registerForm" class="space-y-5">
+
+          <input name="name" placeholder="Full Name" required
+            class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-brand-primary outline-none">
+
+          <input name="email" type="email" placeholder="Email Address" required
+            class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-brand-primary outline-none">
+
+          <input name="password" type="password" placeholder="Password" required
+            class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-brand-primary outline-none">
+
+          <div class="grid grid-cols-2 gap-4">
+
+            <input name="age" type="number" min="13" placeholder="Age" required
+              class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-brand-primary outline-none">
+
+            <select name="gender"
+              class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-brand-primary outline-none">
+              <option value="">Select Gender</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
+
+          </div>
+
+          <input name="occupation" placeholder="Occupation" required
+            class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-brand-primary outline-none">
+
+          <!-- ERROR -->
+          <div id="errorBox" class="hidden bg-red-50 border border-red-200 p-3 rounded-lg">
+            <p id="errorText" class="text-sm text-red-600"></p>
+          </div>
+
+          <!-- BUTTON -->
+          <button id="submitBtn" type="submit"
+            class="w-full py-3 bg-brand-primary hover:bg-brand-primary-hover text-white rounded-xl font-semibold transition">
+            Create Account
+          </button>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+
+    const form = document.getElementById("registerForm");
+    const button = document.getElementById("submitBtn");
+    const errorBox = document.getElementById("errorBox");
+    const errorText = document.getElementById("errorText");
+
+    const API_URL = "http://localhost:5000/api/auth/register";
+
+    // Redirect if already logged in
+    if (localStorage.getItem("mindwellToken")) {
+      window.location.href = "dashboard.html";
+    }
+
+    form.addEventListener("submit", async (e) => {
+
+      e.preventDefault();
+
+      button.disabled = true;
+      button.innerText = "Creating Account...";
+      errorBox.classList.add("hidden");
+
+      const formData = new FormData(form);
+      const payload = Object.fromEntries(formData.entries());
+
+      try {
+
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message || "Registration failed");
+        }
+
+        // Save auth session
+        localStorage.setItem("mindwellToken", data.token);
+        localStorage.setItem("mindwellUser", JSON.stringify(data.user));
+
+        window.location.href = "dashboard.html";
+
+      } catch (err) {
+
+        errorText.innerText = err.message;
+        errorBox.classList.remove("hidden");
+
+      } finally {
+
+        button.disabled = false;
+        button.innerText = "Create Account";
+
+      }
+
+    });
+
+  </script>
+
+</body>
+
+</html>

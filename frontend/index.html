@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>MindWell — Mental Health Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Custom Theme -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-primary': '#2563eb',
+            'brand-primary-hover': '#1e40af',
+            'brand-bg': '#eff6ff',
+            'brand-text': '#1f2937'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .glass {
+      backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+    .text-gradient {
+      background: linear-gradient(to right, #2563eb, #06b6d4);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 0.9s ease;
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .animate-float {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-18px);
+      }
+
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    /* Background blobs for hero */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      animation: blobMove 12s infinite ease-in-out;
+      mix-blend-mode: multiply;
+      z-index: 0;
+    }
+
+    .blob1 {
+      background: #2563eb;
+      width: 400px;
+      height: 400px;
+      top: -120px;
+      left: -120px;
+      animation-delay: 0s;
+    }
+
+    .blob2 {
+      background: #06b6d4;
+      width: 350px;
+      height: 350px;
+      top: 180px;
+      right: -140px;
+      animation-delay: 6s;
+    }
+
+    @keyframes blobMove {
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      50% {
+        transform: translate(20px, -30px) scale(1.1);
+      }
+    }
+
+    /* Typing effect */
+    .typing {
+      border-right: 2px solid #2563eb;
+      white-space: nowrap;
+      overflow: hidden;
+      display: inline-block;
+      animation: typingAnim 4s steps(40, end) infinite;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: #374151;
+      max-width: 650px;
+    }
+
+    @keyframes typingAnim {
+      0% {
+        width: 0;
+      }
+
+      50% {
+        width: 100%;
+      }
+
+      100% {
+        width: 0;
+      }
+    }
+
+    /* Quote container positioning */
+    #quotesContainer {
+      position: relative;
+      height: 3.5rem;
+      margin-bottom: 3.5rem;
+    }
+
+    /* Quote author */
+    .quote-author {
+      font-style: normal;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #2563eb;
+      margin-top: 0.3rem;
+      text-align: center;
+    }
+
+    /* Button hover */
+    .btn-hover:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgb(37 99 235 / 0.4);
+      transition: all 0.3s ease;
+    }
+
+    /* Responsive text scaling */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 4.5rem !important;
+      }
+
+      .typing {
+        font-size: 1.25rem !important;
+        max-width: 90vw;
+      }
+    }
+
+    /* Gradient overlay on hero image */
+    .hero-image-wrapper {
+      position: relative;
+    }
+
+    .hero-image-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(37, 99, 235, 0.3), rgba(6, 182, 212, 0.3));
+      border-radius: 2rem;
+      pointer-events: none;
+      z-index: 1;
+    }
+  </style>
+</head>
+
+<body class="bg-brand-bg text-brand-text">
+
+  <!-- Background Blobs -->
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 left-0 right-0 z-50 glass border-b">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-brand-primary rounded-xl shadow-md"></div>
+        <span class="text-3xl font-black">MindWell</span>
+      </div>
+
+      <div class="hidden md:flex items-center space-x-8">
+        <a href="#features" class="font-semibold text-gray-600 hover:text-brand-primary">Features</a>
+        <a href="#how-it-works" class="font-semibold text-gray-600 hover:text-brand-primary">How it Works</a>
+        <a href="#community" class="font-semibold text-gray-600 hover:text-brand-primary">Community</a>
+
+        <a href="login.html"
+          class="border-2 border-brand-primary text-brand-primary px-7 py-2 rounded-full font-bold">
+          Log In
+        </a>
+
+        <a href="register.html"
+          class="bg-brand-primary text-white px-7 py-2 rounded-full font-bold hover:bg-brand-primary-hover transition btn-hover">
+          Get Started
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="min-h-screen flex items-center pt-28 overflow-hidden relative z-10">
+
+    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
+
+      <div class="reveal relative z-10">
+
+        <span
+          class="inline-block px-6 py-2 mb-8 font-bold tracking-widest text-brand-primary uppercase glass rounded-full">
+          Mental Health Intelligence
+        </span>
+
+        <h1 class="text-7xl lg:text-9xl font-black leading-none mb-8">
+          Predict &<br />
+          <span class="text-gradient">Heal Together</span>
+        </h1>
+
+        <p class="text-2xl text-gray-700 mb-12 max-w-xl">
+          Empowering mental wellness through AI-driven assessments and human-centered care.
+        </p>
+
+        <!-- Dynamic Typing Quotes -->
+        <div id="quotesContainer" class="relative h-14 mb-14 text-center">
+          <p id="quoteText" class="typing mx-auto"></p>
+          <p id="quoteAuthor" class="quote-author"></p>
+        </div>
+
+        <div class="flex flex-wrap gap-6 justify-center md:justify-start">
+          <a href="register.html"
+            class="bg-brand-primary text-white px-12 py-5 rounded-full font-black text-lg shadow-xl hover:bg-brand-primary-hover transition btn-hover">
+            Start Assessment
+          </a>
+
+          <button
+            class="glass px-12 py-5 rounded-full font-black text-lg border shadow btn-hover hover:shadow-lg transition">
+            Watch Demo
+          </button>
+        </div>
+      </div>
+
+      <div class="animate-float reveal hero-image-wrapper">
+        <div class="glass p-6 rounded-[3rem] shadow-2xl relative overflow-hidden">
+          <img src="./../frontend/images/heroimage.png" class="rounded-[2rem] w-full relative z-10" alt="Mental health illustration" />
+          <div class="hero-image-gradient"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- FEATURES -->
+  <section id="features" class="py-32 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+
+      <div class="text-center mb-24 reveal">
+        <h2 class="text-6xl font-black mb-6">Cutting-edge Mental Health Tools</h2>
+        <p class="text-2xl text-gray-500 mb-4">
+          Technology designed with empathy and science.
+        </p>
+        <p class="italic text-gray-400">
+          “Healing is not linear — and that’s okay.”
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-12">
+
+        <div class="glass p-12 rounded-[3rem] reveal hover:shadow-2xl transition">
+          <h3 class="text-3xl font-black mb-6">Predictive AI Analysis</h3>
+          <p class="text-xl text-gray-500">
+            Early detection and personalized insights for proactive care.
+          </p>
+        </div>
+
+        <div class="glass p-12 rounded-[3rem] reveal hover:shadow-2xl transition">
+          <h3 class="text-3xl font-black mb-6">Validated Assessments</h3>
+          <p class="text-xl text-gray-500">
+            Clinically approved psychological screening tools.
+          </p>
+        </div>
+
+        <div class="glass p-12 rounded-[3rem] reveal hover:shadow-2xl transition">
+          <h3 class="text-3xl font-black mb-6">Specialist Network</h3>
+          <p class="text-xl text-gray-500">
+            Secure access to licensed mental health professionals.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMUNITY -->
+  <section id="community" class="py-32 bg-brand-bg">
+    <div class="max-w-7xl mx-auto px-6 reveal">
+      <div class="glass rounded-[3rem] overflow-hidden grid lg:grid-cols-2 shadow-xl">
+
+        <img src="./../frontend/images/communityimage.png" class="w-full h-full object-cover" alt="Community image" />
+
+        <div class="p-20">
+          <h2 class="text-6xl font-black mb-6">You’re not alone</h2>
+          <p class="text-2xl text-gray-500 mb-6">
+            Safe, moderated peer communities that listen without judgment.
+          </p>
+          <p class="italic text-gray-400 mb-10">
+            “Sometimes, being heard is the first step to healing.”
+          </p>
+
+          <button
+            class="bg-brand-primary text-white px-12 py-5 rounded-full font-black text-lg hover:bg-brand-primary-hover transition btn-hover">
+            Explore Groups
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-50 py-16 border-t">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between gap-6">
+      <p class="text-gray-500">&copy; 2026 MindWell. All rights reserved.</p>
+      <div class="flex gap-8 text-gray-500">
+        <span>Terms</span>
+        <span>Privacy</span>
+        <span>Cookies</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Reveal on scroll
+    const reveals = document.querySelectorAll(".reveal");
+    function revealOnScroll() {
+      reveals.forEach(el => {
+        if (el.getBoundingClientRect().top < window.innerHeight - 150) {
+          el.classList.add("active");
+        }
+      });
+    }
+    window.addEventListener("scroll", revealOnScroll);
+    revealOnScroll();
+
+    // Typing & cycling quotes
+    const quotes = [
+      { text: "Your mental health matters just as much as your physical health.", author: "— Unknown" },
+      { text: "Healing takes time, and that’s perfectly okay.", author: "— Anonymous" },
+      { text: "It's okay to ask for help — you are not alone.", author: "— Mental Health America" },
+      { text: "Every step forward, no matter how small, is progress.", author: "— Unknown" },
+      { text: "Self-care is how you take your power back.", author: "— Lalah Delia" },
+      { text: "You are stronger than your struggles.", author: "— Unknown" }
+    ];
+
+    const quoteTextEl = document.getElementById("quoteText");
+    const quoteAuthorEl = document.getElementById("quoteAuthor");
+    let currentQuoteIndex = 0;
+
+    function typeQuote(text, callback) {
+      let i = 0;
+      quoteTextEl.textContent = "";
+      quoteAuthorEl.textContent = "";
+      quoteTextEl.style.borderRight = "2px solid #2563eb";
+
+      function typing() {
+        if (i < text.length) {
+          quoteTextEl.textContent += text.charAt(i);
+          i++;
+          setTimeout(typing, 60);
+        } else {
+          quoteTextEl.style.borderRight = "none";
+          callback();
+        }
+      }
+      typing();
+    }
+
+    function showNextQuote() {
+      const { text, author } = quotes[currentQuoteIndex];
+      typeQuote(text, () => {
+        quoteAuthorEl.textContent = author;
+        setTimeout(() => {
+          currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+          fadeOutQuote(showNextQuote);
+        }, 4000);
+      });
+    }
+
+    function fadeOutQuote(callback) {
+      quoteTextEl.style.transition = "opacity 1s ease";
+      quoteAuthorEl.style.transition = "opacity 1s ease";
+      quoteTextEl.style.opacity = 0;
+      quoteAuthorEl.style.opacity = 0;
+
+      setTimeout(() => {
+        quoteTextEl.style.opacity = 1;
+        quoteAuthorEl.style.opacity = 1;
+        callback();
+      }, 1000);
+    }
+
+    showNextQuote();
+  </script>
+
+</body>
+
+</html>
